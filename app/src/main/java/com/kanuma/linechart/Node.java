@@ -3,6 +3,8 @@ package com.kanuma.linechart;
 import android.graphics.RectF;
 import android.util.Pair;
 
+import java.util.ArrayList;
+
 public class Node {
     private Pair<Integer,Integer> indexInGrid;
     private float gCost=0;
@@ -12,10 +14,12 @@ public class Node {
     private boolean walkable;
     private Node parent;
     private RectF rectPos;
+    private ArrayList<Node> neighbouringNodes;
 
     public Node(int x,int y,boolean walkable,STATE_NODE nodeType) {
         this.nodeType = nodeType;
         this.walkable = walkable;
+        this.neighbouringNodes = new ArrayList<>();
         setIndex(x, y);
     }
 
@@ -77,6 +81,31 @@ public class Node {
 
     public void setParent(Node parent) {
         this.parent = parent;
+    }
+
+    public void setNeighbouringNodes(NodeManager nodeManager) {
+
+        String top,bottom,left,right;
+
+        int x = indexInGrid.first;
+        int y = indexInGrid.second;
+
+        top = x+","+(y-1);
+        bottom = x+","+(y+1);
+        right = (x+1)+","+y;
+        left = (x-1)+","+y;
+
+        neighbouringNodes.add(nodeManager.getNode(top));
+        neighbouringNodes.add(nodeManager.getNode(bottom));
+        neighbouringNodes.add(nodeManager.getNode(right));
+        neighbouringNodes.add(nodeManager.getNode(left));
+
+
+    }
+
+    public ArrayList<Node> getNeighbouringNodes(){
+        if(neighbouringNodes.size() >0 ) return neighbouringNodes;
+        return null;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.kanuma.linechart;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,9 +16,11 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.kanuma.linechart.Algorithm.AStarAlgorithm;
+import com.kanuma.linechart.Algorithm.Algo;
+
 import java.util.ArrayList;
 
-enum STATE_NODE{OBSTACLE_NODE,GOAL_NODE,START_NODE,EMPTY};
 
 public class ScatterChartView extends View {
 
@@ -48,6 +53,8 @@ public class ScatterChartView extends View {
     private Paint obstaclePaint;
     private Paint sourcePaint;
     private Paint destinationPaint;
+    private Paint exploringPaint;
+    private Paint visitedPaint;
 
     private float offsetX;
     private float offsetY;
@@ -55,12 +62,15 @@ public class ScatterChartView extends View {
     private float divY= 20f;// ycoordinate into y equal part
     private ArrayList<ArrayList<RectF>> rectBoxes = new ArrayList<>();
     private STATE_NODE state = STATE_NODE.OBSTACLE_NODE;
+    private boolean isAnimating =false;
 
     //private STATE_NODE[][] rectStateMat;
     private Node[][] nodes;
 
 
     private void init(Context context, AttributeSet attrs) {
+
+        initAllPaints();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity)context).getWindowManager()
@@ -75,6 +85,17 @@ public class ScatterChartView extends View {
         offsetX = screenWidth/divX;
         offsetY = screenHeight/divY;
 
+
+
+        //rectStateMat =new STATE_NODE[(int) divY][(int) divX];
+        nodes = new Node[(int) divY][(int) divX];
+        initStateMatrix();
+        initRectBoxes();
+
+    }
+
+    //initialize all paints
+    private void initAllPaints(){
         obstaclePaint = new Paint();
         obstaclePaint.setColor(Color.BLACK);
         obstaclePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -88,7 +109,7 @@ public class ScatterChartView extends View {
         sourcePaint.setStrokeCap(Paint.Cap.ROUND);
 
         destinationPaint = new Paint();
-        destinationPaint.setColor(Color.RED);
+        destinationPaint.setColor(Color.CYAN);
         destinationPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         destinationPaint.setStrokeWidth(1);
         destinationPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -103,10 +124,15 @@ public class ScatterChartView extends View {
         backgroundPaint2.setStyle(Paint.Style.STROKE);
         backgroundPaint2.setStrokeWidth(3);
 
-        //rectStateMat =new STATE_NODE[(int) divY][(int) divX];
-        nodes = new Node[(int) divY][(int) divX];
-        initStateMatrix();
-        initRectBoxes();
+        exploringPaint = new Paint();
+        exploringPaint.setColor(Color.YELLOW);
+        exploringPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        exploringPaint.setStrokeWidth(1);
+
+        visitedPaint = new Paint();
+        visitedPaint.setColor(Color.RED);
+        visitedPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        visitedPaint.setStrokeWidth(1);
 
     }
 
@@ -117,6 +143,14 @@ public class ScatterChartView extends View {
             for(int j=0;j<divY;j++){
                 //rectStateMat[i][j] = STATE_NODE.EMPTY;
                 nodes[i][j] = new Node(i,j,true,STATE_NODE.EMPTY);
+            }
+        }
+
+        NodeManager manager = new NodeManager(nodes);
+        for(int i=0;i<divX;i++){
+            for(int j=0;j<divY;j++){
+                //rectStateMat[i][j] = STATE_NODE.EMPTY;
+                nodes[i][j].setNeighbouringNodes(manager);
             }
         }
     }
@@ -133,8 +167,10 @@ public class ScatterChartView extends View {
                 //Log.d(TAG, "initRectBoxes: Rect ="+unitRectF.toShortString());
                 rectRowBoxes.add(unitRectF);
 
+                //CHANGE IN PROGESS:
+                //Now,node contains Rect info
 
-
+                nodes[i][j].setRectPos(unitRectF);
 
             }
             //Log.d(TAG, "initRectBoxes: Row Data = "+rectRowBoxes.toString());
@@ -159,12 +195,13 @@ public class ScatterChartView extends View {
 
             }
         }
-
         return null;
     }
 
     private Pair<Integer,Integer> previouslySelectedStartNode = null;
     private Pair<Integer,Integer> previouslySelectedGoalNode = null;
+    private Node sourceNode=null;
+    private Node destinationNode=null;
 
     private void setState(int rectXIndex, int rectYIndex) {
 
@@ -186,9 +223,15 @@ public class ScatterChartView extends View {
                     int sy = previouslySelectedStartNode.second;
                     //rectStateMat[sx][sy] = STATE_NODE.EMPTY;
                     nodes[sx][sy].setNodeType(STATE_NODE.EMPTY);
+                    nodes[sx][sy].setWalkable(true);
                 }
                 //rectStateMat[rectXIndex][rectYIndex]=state;
                 nodes[rectXIndex][rectYIndex].setNodeType(state);
+                nodes[rectXIndex][rectYIndex].setWalkable(false);
+
+                //set the source node
+                sourceNode = nodes[rectXIndex][rectYIndex];
+
                 previouslySelectedStartNode = new Pair<>(rectXIndex,rectYIndex);
                 break;
             case GOAL_NODE:
@@ -202,9 +245,15 @@ public class ScatterChartView extends View {
                     int sy = previouslySelectedGoalNode.second;
                     //rectStateMat[sx][sy] = STATE_NODE.EMPTY;
                     nodes[sx][sy].setNodeType(STATE_NODE.EMPTY);
+                    nodes[sx][sy].setWalkable(true);
                 }
                 //rectStateMat[rectXIndex][rectYIndex]=state;
                 nodes[rectXIndex][rectYIndex].setNodeType(state);
+                nodes[rectXIndex][rectYIndex].setWalkable(false);
+
+                //set the source node
+                destinationNode = nodes[rectXIndex][rectYIndex];
+
                 previouslySelectedGoalNode = new Pair<>(rectXIndex,rectYIndex);
                 break;
             default:
@@ -246,7 +295,11 @@ public class ScatterChartView extends View {
                     canvas.drawRect(rect,sourcePaint);
                 }else if(nodes[xIndex][yIndex].getNodeType() == STATE_NODE.GOAL_NODE ){
                     canvas.drawRect(rect,destinationPaint);
-                }else{
+                }else if(nodes[xIndex][yIndex].getNodeType() == STATE_NODE.EXPLORING ){
+                    canvas.drawRect(rect,exploringPaint);
+                }else if(nodes[xIndex][yIndex].getNodeType() == STATE_NODE.ALREADY_VISITED ){
+                    canvas.drawRect(rect,visitedPaint);
+                } else{
 
                 }
 
@@ -262,10 +315,14 @@ public class ScatterChartView extends View {
         drawBackground(canvas);
         changeState(canvas);
 
+
+
+
 //        if(isTouching){
 //            canvas.drawRect(unitRect,backgroundPaint);
 //        }
     }
+
 
     private RectF unitRect ;
     private boolean isTouching =false;
@@ -314,6 +371,52 @@ public class ScatterChartView extends View {
                 canvas.drawRect(rect,backgroundPaint);
             }
         }
+
+    }
+
+
+
+    private Node[][] initNodeStates;
+
+    public void startAnimating() {
+
+        isAnimating =true;
+
+        /*
+         * Changes will be done to the node[][] array
+         * so, cloning it and keeping it in initNodeState before the modification is done
+         * */
+        initNodeStates = nodes.clone();
+
+        //Select specific algorithm
+        if(sourceNode ==null || destinationNode == null){
+            Log.e(TAG, "startAnimating: SOURCE OR DESTINATION NODE NOT SET");
+            return;
+        }
+        
+        final AStarAlgorithm astar = (AStarAlgorithm) Algo.execute(Algo.Name.A_STAR,nodes,sourceNode,destinationNode);
+        astar.run(this);
+        invalidate();
+
+        /*
+        ValueAnimator animator = ValueAnimator.ofInt(1, 10);
+        animator.setDuration(10000);
+        animator.start();
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //dummy animation
+
+            }
+        });
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+            }
+        });*/
 
     }
 }

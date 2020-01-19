@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ public class ThirdActivity extends AppCompatActivity {
     private LinearLayout layout;
     private ScatterChartView chartView;
     private RadioGroup optionGroup;
+    private Button startButton;
 
 
     @Override
@@ -39,6 +41,8 @@ public class ThirdActivity extends AppCompatActivity {
         layout.addView(chartView);
         optionGroup = findViewById(R.id.radio_group);
         optionGroup.setOnCheckedChangeListener(changeListener);
+        startButton =findViewById(R.id.startBtn);
+        startButton.setOnClickListener(startButtonListener);
 
         //addOptionView();
 
@@ -62,6 +66,14 @@ public class ThirdActivity extends AppCompatActivity {
                     Log.e(TAG, "onCheckedChanged: ERROR");
             }
 
+        }
+    };
+
+
+    View.OnClickListener startButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            chartView.startAnimating();
         }
     };
 
