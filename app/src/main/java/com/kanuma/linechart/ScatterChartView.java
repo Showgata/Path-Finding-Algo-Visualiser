@@ -18,6 +18,7 @@ import android.view.View;
 
 import com.kanuma.linechart.Algorithm.AStarAlgorithm;
 import com.kanuma.linechart.Algorithm.Algo;
+import com.kanuma.linechart.Algorithm.BFS;
 
 import java.util.ArrayList;
 
@@ -394,8 +395,11 @@ public class ScatterChartView extends View {
             return;
         }
         
-        final AStarAlgorithm astar = (AStarAlgorithm) Algo.execute(Algo.Name.A_STAR,nodes,sourceNode,destinationNode);
-        astar.run(this);
+//        final AStarAlgorithm astar = (AStarAlgorithm) Algo.execute(Algo.Name.A_STAR,nodes,sourceNode,destinationNode);
+//        astar.run(this);
+
+        final BFS bfs = (BFS) Algo.execute(Algo.Name.BFS,nodes,sourceNode,destinationNode);
+        bfs.run(this);
         invalidate();
 
         /*

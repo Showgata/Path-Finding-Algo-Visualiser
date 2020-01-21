@@ -2,7 +2,6 @@ package com.kanuma.linechart.Algorithm;
 
 import android.os.Handler;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 
 import com.kanuma.linechart.Node;
@@ -15,18 +14,28 @@ public class AStarAlgorithm extends Algo{
     private static final String TAG = "AStarAlgorithm";
 
     private LinkedList<Node> openSet= new LinkedList<>();
+    private LinkedList<Node> cameFrom = new LinkedList<>();
+
     private Node[][] nodeMatrix;
-    private Node startIndex;
-    private Node goalIndex;
+    private Node startNode;
+    private Node goalNode;
     private static int i =0;
     private Node currentNode;
 
-    public AStarAlgorithm(Node[][] nodeMatrix, Node startIndex, Node goalIndex) {
+    private double tempG =0;
+
+    public AStarAlgorithm(Node[][] nodeMatrix, Node startNode, Node goalNode) {
         this.nodeMatrix = nodeMatrix;
-        this.startIndex = startIndex;
-        this.goalIndex = goalIndex;
-        startIndex.setgCost(0);
-        openSet.push(startIndex);
+        this.startNode = startNode;
+        this.goalNode = goalNode;
+
+        //Set the g(x) of source node to zero
+        startNode.setgCost(0);
+
+        //Set the f(x)=h(x) of source node to zero
+        startNode.sethCost(calculateHeuristicFun(startNode,goalNode));
+
+        openSet.push(startNode);
     }
 
 
@@ -37,18 +46,32 @@ public class AStarAlgorithm extends Algo{
             @Override
             public void run() {
 
-                if(openSet.size()>0 && currentNode != goalIndex){
+                if(openSet.size()>0){
+
+                    if(currentNode == goalNode) return; // if found use cameFrom to reconstruct the solution path
 
                     currentNode = openSet.poll();
                     if(currentNode!=null && currentNode.getNodeType() != STATE_NODE.ALREADY_VISITED) {
                         Log.d(TAG, "run: currentNode"+currentNode.getIndex().toString());
                         currentNode.setNodeType(STATE_NODE.EXPLORING);
                         v.invalidate();
+
                         for (Node neighbourNode : currentNode.getNeighbouringNodes()) {
-                            neighbourNode.setgCost(currentNode.getgCost()+1);
-                            openSet.push(neighbourNode);
+
+                            tempG = currentNode.getgCost() + 1;
+                            if(neighbourNode != null && tempG < neighbourNode.getgCost()){
+                                //use came_from to record
+                                neighbourNode.setgCost(tempG);
+                                neighbourNode.sethCost(calculateHeuristicFun(neighbourNode,goalNode));
+                            }
+
+                            if(!openSet.contains(neighbourNode)) {
+                                openSet.push(neighbourNode);
+                                currentNode.setNodeType(STATE_NODE.EXPLORING);
+                            }
                         }
-                        currentNode.setNodeType(STATE_NODE.EXPLORING);
+
+                        currentNode.setNodeType(STATE_NODE.ALREADY_VISITED);
                         v.invalidate();
                     }
 

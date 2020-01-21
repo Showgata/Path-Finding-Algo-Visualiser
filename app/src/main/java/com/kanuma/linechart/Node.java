@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class Node {
     private Pair<Integer,Integer> indexInGrid;
-    private float gCost=0;
-    private float hCost=0;
-    private float fCost =0;
+    private double gCost=0;
+    private double hCost=0;
+    private double fCost =0;
     private STATE_NODE nodeType;
     private boolean walkable;
     private Node parent;
@@ -20,10 +20,11 @@ public class Node {
         this.nodeType = nodeType;
         this.walkable = walkable;
         this.neighbouringNodes = new ArrayList<>();
+        this.gCost=99999;
         setIndex(x, y);
     }
 
-    public float getfCost() {
+    public double getfCost() {
         return hCost+gCost;
     }
 
@@ -51,19 +52,19 @@ public class Node {
         return walkable;
     }
 
-    public float getgCost() {
+    public double getgCost() {
         return gCost;
     }
 
-    public void setgCost(float gCost) {
+    public void setgCost(double gCost) {
         this.gCost = gCost;
     }
 
-    public float gethCost() {
+    public double gethCost() {
         return hCost;
     }
 
-    public void sethCost(float hCost) {
+    public void sethCost(double hCost) {
         this.hCost = hCost;
     }
 
