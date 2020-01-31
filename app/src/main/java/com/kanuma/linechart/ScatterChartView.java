@@ -19,6 +19,7 @@ import android.view.View;
 import com.kanuma.linechart.Algorithm.AStarAlgorithm;
 import com.kanuma.linechart.Algorithm.Algo;
 import com.kanuma.linechart.Algorithm.BFS;
+import com.kanuma.linechart.Algorithm.DFS;
 
 import java.util.ArrayList;
 
@@ -56,6 +57,7 @@ public class ScatterChartView extends View {
     private Paint destinationPaint;
     private Paint exploringPaint;
     private Paint visitedPaint;
+    private Paint finalPaint;
 
     private float offsetX;
     private float offsetY;
@@ -134,6 +136,11 @@ public class ScatterChartView extends View {
         visitedPaint.setColor(Color.RED);
         visitedPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         visitedPaint.setStrokeWidth(1);
+
+        finalPaint = new Paint();
+        finalPaint.setColor(Color.BLUE);
+        finalPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        finalPaint.setStrokeWidth(1);
 
     }
 
@@ -300,6 +307,8 @@ public class ScatterChartView extends View {
                     canvas.drawRect(rect,exploringPaint);
                 }else if(nodes[xIndex][yIndex].getNodeType() == STATE_NODE.ALREADY_VISITED ){
                     canvas.drawRect(rect,visitedPaint);
+                } else if(nodes[xIndex][yIndex].getNodeType() == STATE_NODE.FINAL ){
+                    canvas.drawRect(rect,finalPaint);
                 } else{
 
                 }
@@ -398,9 +407,14 @@ public class ScatterChartView extends View {
 //        final AStarAlgorithm astar = (AStarAlgorithm) Algo.execute(Algo.Name.A_STAR,nodes,sourceNode,destinationNode);
 //        astar.run(this);
 
-        final BFS bfs = (BFS) Algo.execute(Algo.Name.BFS,nodes,sourceNode,destinationNode);
-        bfs.run(this);
-        invalidate();
+//        final BFS bfs = (BFS) Algo.execute(Algo.Name.BFS,nodes,sourceNode,destinationNode);
+//        bfs.run(this);
+//        invalidate();
+
+
+          final DFS dfs = (DFS) Algo.execute(Algo.Name.DFS,nodes,sourceNode,destinationNode);
+          dfs.run(this);
+          invalidate();
 
         /*
         ValueAnimator animator = ValueAnimator.ofInt(1, 10);

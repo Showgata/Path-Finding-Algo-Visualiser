@@ -15,6 +15,9 @@ public abstract class Algo {
         }else if(algoName == Name.A_STAR){
             return new AStarAlgorithm(nodeMatrix,startIndex,goalIndex);
         }
+        else if(algoName == Name.DFS){
+            return new DFS(nodeMatrix,startIndex,goalIndex);
+        }
         return null;
     }
 

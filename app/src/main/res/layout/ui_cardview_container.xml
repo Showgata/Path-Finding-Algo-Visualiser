@@ -58,7 +58,7 @@
                 android:id="@+id/startBtn"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:text=">" />
+                android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
 
         </LinearLayout>
 
