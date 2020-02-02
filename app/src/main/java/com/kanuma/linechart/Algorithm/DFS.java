@@ -37,7 +37,7 @@ public class DFS extends Algo{
         startNode.setgCost(0);
 
         //Set the f(x)=h(x) of source node to zero
-        startNode.sethCost(calculateHeuristicFun(startNode,goalNode));
+        //startNode.sethCost(calculateHeuristicFun(startNode,goalNode));
 
         currentNode = startNode;
         openSet.push(startNode);
@@ -80,7 +80,7 @@ public class DFS extends Algo{
                                 neighbourNode.setNodeType(STATE_NODE.EXPLORING);
                                 v.invalidate();
 
-                                if(neighbourNode == goalNode) {
+                                if( neighbourNode == goalNode ) {
                                     Log.d(TAG, "run: GOAL STATE FOUND !!!");
                                     Log.d(TAG, "Distance : "+goalNode.getgCost());
                                     h.removeCallbacksAndMessages(null);
@@ -114,6 +114,7 @@ public class DFS extends Algo{
         while(currentNode != startNode){
             path.add(currentNode);
             for(Node neightbourNode : currentNode.getNeighbouringNodes()){
+                if(neightbourNode == null) break;
                 if(neightbourNode.getgCost() == currentNode.getgCost()-1){
                     currentNode = neightbourNode;
                     break;

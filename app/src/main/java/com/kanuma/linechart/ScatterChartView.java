@@ -67,6 +67,8 @@ public class ScatterChartView extends View {
     private STATE_NODE state = STATE_NODE.OBSTACLE_NODE;
     private boolean isAnimating =false;
 
+    private Algo.Name currentAlgoName = Algo.Name.BFS;
+
     //private STATE_NODE[][] rectStateMat;
     private Node[][] nodes;
 
@@ -370,6 +372,8 @@ public class ScatterChartView extends View {
     //clear matrix
     public void clearGrid(){
         initStateMatrix();
+        initRectBoxes();
+        invalidate();
     }
 
 
@@ -384,57 +388,24 @@ public class ScatterChartView extends View {
 
     }
 
-
-
-    private Node[][] initNodeStates;
-
     public void startAnimating() {
 
         isAnimating =true;
-
-        /*
-         * Changes will be done to the node[][] array
-         * so, cloning it and keeping it in initNodeState before the modification is done
-         * */
-        initNodeStates = nodes.clone();
-
         //Select specific algorithm
         if(sourceNode ==null || destinationNode == null){
             Log.e(TAG, "startAnimating: SOURCE OR DESTINATION NODE NOT SET");
             return;
+        }else {
+            Algo.execute(currentAlgoName, nodes, sourceNode, destinationNode, this);
+            invalidate();
         }
-        
-//        final AStarAlgorithm astar = (AStarAlgorithm) Algo.execute(Algo.Name.A_STAR,nodes,sourceNode,destinationNode);
-//        astar.run(this);
 
-//        final BFS bfs = (BFS) Algo.execute(Algo.Name.BFS,nodes,sourceNode,destinationNode);
-//        bfs.run(this);
-//        invalidate();
+    }
 
-
-          final DFS dfs = (DFS) Algo.execute(Algo.Name.DFS,nodes,sourceNode,destinationNode);
-          dfs.run(this);
-          invalidate();
-
-        /*
-        ValueAnimator animator = ValueAnimator.ofInt(1, 10);
-        animator.setDuration(10000);
-        animator.start();
-
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                //dummy animation
-
-            }
-        });
-
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-        });*/
-
+    public void setCurrentAlgoName(Algo.Name name){
+        clearGrid();
+        initRectBoxes();
+        this.currentAlgoName =name;
+        invalidate();
     }
 }

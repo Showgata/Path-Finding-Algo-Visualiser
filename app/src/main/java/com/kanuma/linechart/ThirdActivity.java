@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.kanuma.linechart.Algorithm.Algo;
 import com.opencsv.CSVReader;
 
 import java.io.IOException;
@@ -28,7 +32,10 @@ public class ThirdActivity extends AppCompatActivity {
     private ScatterChartView chartView;
     private RadioGroup optionGroup;
     private Button startButton;
+    private Button clearButton;
+    private Spinner spinner;
 
+    private String[] algo ={"BFS","DFS","A-Star"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +44,51 @@ public class ThirdActivity extends AppCompatActivity {
         loadData();
 
         layout = findViewById(R.id.ll3);
+
+        spinner =findViewById(R.id.algolist_spinner);
+        ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_row,algo);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(aa);
+        spinner.setOnItemSelectedListener(onItemSelectedListener);
+
         chartView= new ScatterChartView(this);
         layout.addView(chartView);
+
         optionGroup = findViewById(R.id.radio_group);
         optionGroup.setOnCheckedChangeListener(changeListener);
+
         startButton =findViewById(R.id.startBtn);
         startButton.setOnClickListener(startButtonListener);
+
+        clearButton =findViewById(R.id.clearBtn);
+        clearButton.setOnClickListener(clearButtonListener);
 
         //addOptionView();
 
     }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            if(algo[position].equals("BFS")){
+                chartView.setCurrentAlgoName(Algo.Name.BFS);
+            }else if(algo[position].equals("DFS")){
+                chartView.setCurrentAlgoName(Algo.Name.DFS);
+            }else if(algo[position].equals("A-Star")){
+                chartView.setCurrentAlgoName(Algo.Name.A_STAR);
+            }else{
+
+            }
+
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            chartView.setCurrentAlgoName(Algo.Name.BFS);
+        }
+    };
 
     RadioGroup.OnCheckedChangeListener changeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
@@ -74,6 +116,13 @@ public class ThirdActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             chartView.startAnimating();
+        }
+    };
+
+    View.OnClickListener clearButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            chartView.clearGrid();
         }
     };
 

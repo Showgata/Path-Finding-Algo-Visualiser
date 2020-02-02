@@ -5,19 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusableInTouchMode="true"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:background="@color/cardview_light_background">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:id="@+id/ui_container"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <LinearLayout
+            android:id="@+id/llt1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -27,7 +32,7 @@
             <RadioGroup
                 android:id="@+id/radio_group"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -37,33 +42,69 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:checked="true"
-                    android:text="Obstacles" />
+                    android:fontFamily="serif"
+                    android:text="Obstacles"
+                    android:textSize="12sp"
+                    android:scaleX="0.9"
+                    android:scaleY="0.9"/>
 
                 <RadioButton
                     android:id="@+id/source_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="Source" />
+                    android:fontFamily="serif"
+                    android:text="Source"
+                    android:textSize="12sp"
+                    android:scaleX="0.9"
+                    android:scaleY="0.9"/>
 
                 <RadioButton
                     android:id="@+id/destination_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="Destination" />
+                    android:fontFamily="serif"
+                    android:text="Destination"
+                    android:textSize="12sp"
+                    android:scaleX="0.9"
+                    android:scaleY="0.9"/>
             </RadioGroup>
 
             <Button
                 android:id="@+id/startBtn"
-                android:layout_width="60dp"
+                android:layout_width="40dp"
+                android:gravity="center"
                 android:layout_height="match_parent"
                 android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/llt2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
 
-    </android.support.v7.widget.CardView>
+            <Spinner
+                android:id="@+id/algolist_spinner"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                />
+
+            <Button
+                android:id="@+id/clearBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/clear_btn" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

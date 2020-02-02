@@ -36,7 +36,7 @@ public class BFS extends Algo{
         startNode.setgCost(0);
 
         //Set the f(x)=h(x) of source node to zero
-        startNode.sethCost(calculateHeuristicFun(startNode,goalNode));
+        //startNode.sethCost(calculateHeuristicFun(startNode,goalNode));
 
         currentNode = startNode;
         openSet.add(startNode);

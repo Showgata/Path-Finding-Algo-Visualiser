@@ -2,23 +2,24 @@ package com.kanuma.linechart.Algorithm;
 
 
 import android.util.Pair;
+import android.view.View;
 
 import com.kanuma.linechart.Node;
 
 public abstract class Algo {
     public enum Name {BFS,DFS,A_STAR};
 
-    public static Algo execute(Name algoName, Node[][] nodeMatrix, Node startIndex, Node goalIndex){
+    public static void execute(Name algoName, Node[][] nodeMatrix, Node startIndex, Node goalIndex, View view){
 
         if(algoName == Name.BFS){
-            return new BFS(nodeMatrix,startIndex,goalIndex);
+            (new BFS(nodeMatrix,startIndex,goalIndex)).run(view);
         }else if(algoName == Name.A_STAR){
-            return new AStarAlgorithm(nodeMatrix,startIndex,goalIndex);
+            (new AStarAlgorithm(nodeMatrix,startIndex,goalIndex)).run(view);
         }
         else if(algoName == Name.DFS){
-            return new DFS(nodeMatrix,startIndex,goalIndex);
+            (new DFS(nodeMatrix,startIndex,goalIndex)).run(view);
         }
-        return null;
+
     }
 
     private double calculateEuclideanDistance(double x1,double y1,double x2,double y2){

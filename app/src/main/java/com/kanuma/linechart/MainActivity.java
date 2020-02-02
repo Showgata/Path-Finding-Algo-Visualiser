@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity implements MyLineView.OnSqua
     private LinearLayout layout;
     private MyLineView lineView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
