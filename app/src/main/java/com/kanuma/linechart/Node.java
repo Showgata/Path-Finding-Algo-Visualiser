@@ -5,7 +5,7 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 
-public class Node {
+public class Node implements Comparable{
     private Pair<Integer,Integer> indexInGrid;
     private double gCost=0;
     private double hCost=0;
@@ -118,5 +118,15 @@ public class Node {
                 ", nodeType=" + nodeType +
                 ", walkable=" + walkable +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+
+        if(this.getfCost() > ((Node)o).getfCost())
+            return 1;
+        else if(this.getfCost() < ((Node)o).getfCost())
+            return -1;
+        return 0;
     }
 }

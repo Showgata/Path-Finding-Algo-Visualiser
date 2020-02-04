@@ -7,15 +7,17 @@ import android.view.View;
 import com.kanuma.linechart.Node;
 import com.kanuma.linechart.STATE_NODE;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class AStarAlgorithm extends Algo{
 
     private static final String TAG = "AStarAlgorithm";
 
-    private LinkedList<Node> openSet= new LinkedList<>();
+    private PriorityQueue<Node> openSet;
     private Map<Node,Node> cameFrom = new HashMap<>();
 
     private Node[][] nodeMatrix;
@@ -31,13 +33,14 @@ public class AStarAlgorithm extends Algo{
         this.startNode = startNode;
         this.goalNode = goalNode;
 
+        this.openSet= new PriorityQueue<Node>();
         //Set the g(x) of source node to zero
         startNode.setgCost(0);
 
         //Set the f(x)=h(x) of source node to zero
         startNode.sethCost(calculateHeuristicFun(startNode,goalNode));
 
-        openSet.push(startNode);
+        openSet.add(startNode);
     }
 
 
@@ -50,11 +53,6 @@ public class AStarAlgorithm extends Algo{
 
                 if(openSet.size()>0){
 
-                    if(currentNode == goalNode) {
-                        Log.d(TAG, "run: GOAL STATE FOUND !!!");
-                        reconstructPath(v);
-                        return;} // if found use cameFrom to reconstruct the solution path
-
                     currentNode = openSet.poll();
                     if(currentNode!=null && currentNode.getNodeType() != STATE_NODE.ALREADY_VISITED) {
 //                        Log.d(TAG, "run: currentNode"+currentNode.getIndex().toString());
@@ -65,6 +63,9 @@ public class AStarAlgorithm extends Algo{
 
                             tempG = currentNode.getgCost() + 1;
                             if(neighbourNode != null && tempG < neighbourNode.getgCost()){
+
+                                if(neighbourNode.getNodeType() == STATE_NODE.OBSTACLE_NODE) continue;
+
                                 //use came_from to record
                                 cameFrom.put(neighbourNode,currentNode);
                                 neighbourNode.setgCost(tempG);
@@ -73,8 +74,13 @@ public class AStarAlgorithm extends Algo{
                                 v.invalidate();
                             }
 
+                            if(currentNode == goalNode) {
+                                Log.d(TAG, "run: GOAL STATE FOUND !!!");
+                                reconstructPath(v);
+                                return;} // if found use cameFrom to reconstruct the solution path
+
                             if(!openSet.contains(neighbourNode)) {
-                                openSet.push(neighbourNode);
+                                openSet.add(neighbourNode);
                             }
                         }
 
@@ -118,6 +124,5 @@ public class AStarAlgorithm extends Algo{
 
 
     }
-
 
 }
