@@ -53,12 +53,6 @@ public class DFS extends Algo{
 
                 if(openSet.size()>0){
 
-//                    if(currentNode == goalNode) {
-//                        Log.d(TAG, "run: GOAL STATE FOUND !!!");
-//                        h.removeCallbacksAndMessages(null);
-//                        calculateShortestPath(v);
-//                        return; // if found use cameFrom to reconstruct the solution path
-//                    }
 
 
                     currentNode = openSet.pop();
@@ -87,11 +81,14 @@ public class DFS extends Algo{
                                     calculateShortestPath(v);
                                     return; // if found use cameFrom to reconstruct the solution path
                                 }
+
                             }
 
-                            if(!openSet.contains(neighbourNode)) {
-                                openSet.push(neighbourNode);
+                            if(openSet.contains(neighbourNode)) {
+                                openSet.remove(neighbourNode);
+
                             }
+                            openSet.push(neighbourNode);
                         }
                         currentNode.setNodeType(STATE_NODE.ALREADY_VISITED);
                         v.invalidate();
@@ -114,7 +111,7 @@ public class DFS extends Algo{
         while(currentNode != startNode){
             path.add(currentNode);
             for(Node neightbourNode : currentNode.getNeighbouringNodes()){
-                if(neightbourNode == null) break;
+                if(neightbourNode == null) continue;
                 if(neightbourNode.getgCost() == currentNode.getgCost()-1){
                     currentNode = neightbourNode;
                     break;

@@ -62,7 +62,7 @@ public class ScatterChartView extends View {
     private float offsetX;
     private float offsetY;
     private float divX = 20f;// xcoordinate into x equal part
-    private float divY= 20f;// ycoordinate into y equal part
+    private float divY= 40f;// ycoordinate into y equal part
     private ArrayList<ArrayList<RectF>> rectBoxes = new ArrayList<>();
     private STATE_NODE state = STATE_NODE.OBSTACLE_NODE;
     private boolean isAnimating =false;
@@ -93,7 +93,7 @@ public class ScatterChartView extends View {
 
 
         //rectStateMat =new STATE_NODE[(int) divY][(int) divX];
-        nodes = new Node[(int) divY][(int) divX];
+        nodes = new Node[(int) divX][(int) divY];
         initStateMatrix();
         initRectBoxes();
 
@@ -125,7 +125,7 @@ public class ScatterChartView extends View {
         backgroundPaint.setStrokeWidth(5);
 
         backgroundPaint2 = new Paint();
-        backgroundPaint2.setColor(Color.LTGRAY);
+        backgroundPaint2.setColor(Color.parseColor("#b2bec3"));
         backgroundPaint2.setStyle(Paint.Style.STROKE);
         backgroundPaint2.setStrokeWidth(3);
 
@@ -173,7 +173,14 @@ public class ScatterChartView extends View {
         for(int i=0;i<divX;i++){
             rectRowBoxes = new ArrayList<>();
             for(int j=0;j<divY;j++){
-                RectF unitRectF = new RectF(i * offsetX, j * offsetY, offsetX * (i + 1), offsetY * (j + 1));
+
+                /*
+                *
+                * Changes done -> offsetX to offsetY
+                *
+                * */
+
+                RectF unitRectF = new RectF(i * offsetX, j * offsetX, offsetX * (i + 1), offsetX * (j + 1));
                 //Log.d(TAG, "initRectBoxes: Rect ="+unitRectF.toShortString());
                 rectRowBoxes.add(unitRectF);
 
@@ -284,9 +291,15 @@ public class ScatterChartView extends View {
             canvas.drawLine(currentPos,0,currentPos,screenHeight,backgroundPaint2);
         }
 
+        /*
+        * Changes done
+        * 1. offsetY->offsetX
+        *
+        * */
+
         currentPos=0;
         for(int i=1;i<=divY;i++){
-            currentPos+=offsetY;
+            currentPos+=offsetX;
             canvas.drawLine(0,currentPos,screenWidth,currentPos,backgroundPaint2);
         }
 

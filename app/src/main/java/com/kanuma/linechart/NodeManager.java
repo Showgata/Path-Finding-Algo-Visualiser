@@ -15,7 +15,7 @@ public class NodeManager {
     private void createHash() {
 
         for(int i=0;i<nodeMatrix.length;i++) {
-            for (int j = 0; j < nodeMatrix.length; j++) {
+            for (int j = 0; j < nodeMatrix[0].length; j++) {
                 nodeHashMap.put(i+","+j, nodeMatrix[i][j]);
             }
         }

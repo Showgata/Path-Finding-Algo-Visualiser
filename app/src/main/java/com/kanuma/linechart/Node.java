@@ -96,9 +96,11 @@ public class Node implements Comparable{
         right = (x+1)+","+y;
         left = (x-1)+","+y;
 
-        neighbouringNodes.add(nodeManager.getNode(top));
+
+
         neighbouringNodes.add(nodeManager.getNode(bottom));
         neighbouringNodes.add(nodeManager.getNode(right));
+        neighbouringNodes.add(nodeManager.getNode(top));
         neighbouringNodes.add(nodeManager.getNode(left));
 
 
