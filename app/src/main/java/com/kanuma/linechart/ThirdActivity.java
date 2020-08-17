@@ -63,8 +63,6 @@ public class ThirdActivity extends AppCompatActivity {
         clearButton =findViewById(R.id.clearBtn);
         clearButton.setOnClickListener(clearButtonListener);
 
-        //addOptionView();
-
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
