@@ -75,8 +75,6 @@ public class DFS extends Algo{
                                 v.invalidate();
 
                                 if( neighbourNode == goalNode ) {
-                                    Log.d(TAG, "run: GOAL STATE FOUND !!!");
-                                    Log.d(TAG, "Distance : "+goalNode.getgCost());
                                     h.removeCallbacksAndMessages(null);
                                     calculateShortestPath(v);
                                     return; // if found use cameFrom to reconstruct the solution path
@@ -114,6 +112,7 @@ public class DFS extends Algo{
                 if(neightbourNode == null) continue;
                 if(neightbourNode.getgCost() == currentNode.getgCost()-1){
                     currentNode = neightbourNode;
+                    Log.d(TAG, "calculateShortestPath: gCost="+currentNode.getgCost());
                     break;
                 }
             }
@@ -128,7 +127,6 @@ public class DFS extends Algo{
                 Node r =path.poll();
                 if(r != null){
                     r.setNodeType(STATE_NODE.FINAL);
-                    Log.d(TAG, "run: "+r.getgCost());
                     v.invalidate();
                 }else{
                     return;

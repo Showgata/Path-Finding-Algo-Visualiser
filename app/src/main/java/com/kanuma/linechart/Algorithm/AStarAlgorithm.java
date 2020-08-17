@@ -67,11 +67,17 @@ public class AStarAlgorithm extends Algo{
                                 if(neighbourNode.getNodeType() == STATE_NODE.OBSTACLE_NODE) continue;
 
                                 //use came_from to record
-                                cameFrom.put(neighbourNode,currentNode);
-                                neighbourNode.setgCost(tempG);
-                                neighbourNode.sethCost(calculateHeuristicFun(neighbourNode,goalNode));
-                                neighbourNode.setNodeType(STATE_NODE.EXPLORING);
-                                v.invalidate();
+                                if(tempG <neighbourNode.getgCost()) {
+                                    cameFrom.put(neighbourNode, currentNode);
+                                    neighbourNode.setgCost(tempG);
+                                    neighbourNode.sethCost(calculateHeuristicFun(neighbourNode, goalNode));
+                                    neighbourNode.setNodeType(STATE_NODE.EXPLORING);
+                                    v.invalidate();
+
+                                if(!openSet.contains(neighbourNode)) {
+                                    openSet.add(neighbourNode);
+                                }
+                                }
                             }
 
                             if(currentNode == goalNode) {
@@ -79,9 +85,7 @@ public class AStarAlgorithm extends Algo{
                                 reconstructPath(v);
                                 return;} // if found use cameFrom to reconstruct the solution path
 
-                            if(!openSet.contains(neighbourNode)) {
-                                openSet.add(neighbourNode);
-                            }
+
                         }
 
                         currentNode.setNodeType(STATE_NODE.ALREADY_VISITED);

@@ -104,6 +104,8 @@ public class Node implements Comparable{
         neighbouringNodes.add(nodeManager.getNode(left));
 
 
+
+
     }
 
     public ArrayList<Node> getNeighbouringNodes(){
